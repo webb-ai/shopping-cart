@@ -6,8 +6,11 @@ import os
 from datetime import datetime
 
 from ddtrace import patch_all
-from datadog import statsd
+from datadog import initialize, statsd
 
+# Initialize Datadog
+initialize(statsd_host=os.getenv('DD_AGENT_HOST', 'localhost'),
+           statsd_port=int(os.getenv('DD_DOGSTATSD_PORT', 8125)))
 
 patch_all()
 app = FastAPI()
