@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 
 from ddtrace import patch_all
+from datadog import statsd
 
 
 patch_all()
@@ -26,6 +27,15 @@ class Item(BaseModel):
 class CartItem(BaseModel):
     item_id: str
     quantity: int
+
+
+@app.middleware("http")
+async def add_process_time_header(request, call_next):
+    start_time = datetime.utcnow()
+    response = await call_next(request)
+    process_time = (datetime.utcnow() - start_time).total_seconds()
+    statsd.histogram('test.api.request.duration.seconds', process_time, tags=[f"endpoint:{request.url.path}"])
+    return response
 
 @app.get("/status")
 async def get_status():
