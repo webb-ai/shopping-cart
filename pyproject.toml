@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "shopping-cart"
+version = "0.1.0"
+description = ""
+authors = ["Chi Su <chi@webb.ai>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["standard"], version = "^0.112.1"}
+redis = "^5.0.8"
+stripe = "^10.8.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
