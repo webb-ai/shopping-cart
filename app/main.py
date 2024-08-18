@@ -9,7 +9,7 @@ from ddtrace import patch_all
 from datadog import initialize, statsd
 
 # Initialize Datadog
-initialize(statsd_host=os.getenv('DD_AGENT_HOST', 'localhost'),
+initialize(statsd_host=os.getenv('DOGSTATSD_HOST_IP', 'localhost'),
            statsd_port=int(os.getenv('DD_DOGSTATSD_PORT', 8125)))
 
 patch_all()
