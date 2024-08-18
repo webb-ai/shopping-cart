@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: shopping-cart
-        image: 096844793322.dkr.ecr.us-west-2.amazonaws.com/shopping-cart:0ae70e3
+        image: 096844793322.dkr.ecr.us-west-2.amazonaws.com/shopping-cart:f40eac8
         ports:
         - containerPort: 8000
         env:

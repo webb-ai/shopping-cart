@@ -5,12 +5,14 @@ import stripe
 import os
 from datetime import datetime
 
-from ddtrace import patch_all
+from ddtrace import patch_all, tracer
 from datadog import initialize, statsd
 
 # Initialize Datadog
 initialize(statsd_host=os.getenv('DOGSTATSD_HOST_IP', 'localhost'),
            statsd_port=int(os.getenv('DD_DOGSTATSD_PORT', 8125)))
+
+tracer.configure(hostname=os.getenv('DOGSTATSD_HOST_IP', 'localhost'), port=8125)
 
 patch_all()
 app = FastAPI()
