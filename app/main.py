@@ -39,6 +39,7 @@ async def add_process_time_header(request, call_next):
     response = await call_next(request)
     process_time = (datetime.utcnow() - start_time).total_seconds()
     statsd.histogram('test.api.request.duration.seconds', process_time, tags=[f"endpoint:{request.url.path}"])
+    print(process_time)
     return response
 
 @app.get("/status")
