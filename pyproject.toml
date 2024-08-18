@@ -11,6 +11,7 @@ fastapi = {extras = ["standard"], version = "^0.112.1"}
 redis = "^5.0.8"
 stripe = "^10.8.0"
 prometheus-fastapi-instrumentator = "^7.0.0"
+requests = "^2.32.3"
 
 
 [build-system]
