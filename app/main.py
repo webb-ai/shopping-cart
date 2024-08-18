@@ -12,7 +12,7 @@ from datadog import initialize, statsd
 initialize(statsd_host=os.getenv('DOGSTATSD_HOST_IP', 'localhost'),
            statsd_port=int(os.getenv('DD_DOGSTATSD_PORT', 8125)))
 
-tracer.configure(hostname=os.getenv('DOGSTATSD_HOST_IP', 'localhost'), port=8125)
+tracer.configure(hostname=os.getenv('DOGSTATSD_HOST_IP', 'localhost'), port=8126)
 
 patch_all()
 app = FastAPI()
