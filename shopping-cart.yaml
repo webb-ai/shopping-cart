@@ -17,7 +17,7 @@ spec:
         ad.datadoghq.com/shopping-cart.instances: |
           [
             {
-              "prometheus_url": "http://%%host%%:9090/metrics",
+              "prometheus_url": "http://%%host%%:8000/metrics",
               "namespace": "webbai",
               "metrics": ["*"]
             }
@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: shopping-cart
-        image: 096844793322.dkr.ecr.us-west-2.amazonaws.com/shopping-cart:f40eac8
+        image: 096844793322.dkr.ecr.us-west-2.amazonaws.com/shopping-cart:63dc7de
         ports:
         - containerPort: 8000
         env:
