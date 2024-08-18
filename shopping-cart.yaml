@@ -11,6 +11,17 @@ spec:
     metadata:
       labels:
         app: shopping-cart
+      annotations:
+        ad.datadoghq.com/shopping-cart.check_names: '["openmetrics"]'
+        ad.datadoghq.com/shopping-cart.init_configs: '[{}]'
+        ad.datadoghq.com/shopping-cart.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:9090/metrics",
+              "namespace": "webbai",
+              "metrics": ["*"]
+            }
+          ]
     spec:
       containers:
       - name: shopping-cart
@@ -25,10 +36,6 @@ spec:
             secretKeyRef:
               name: stripe-secret
               key: api-key
-        - name: DOGSTATSD_HOST_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
         readinessProbe:
           httpGet:
             path: /status

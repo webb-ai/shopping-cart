@@ -5,17 +5,31 @@ import stripe
 import os
 from datetime import datetime
 
-from ddtrace import patch_all, tracer
-from datadog import initialize, statsd
+from prometheus_fastapi_instrumentator import Instrumentator, metrics
 
-# Initialize Datadog
-initialize(statsd_host='datadog-agent.datadog.svc.cluster.local', statsd_port=8125)
+METRICS_ENDPOINT = "/metrics"
 
-tracer.configure(hostname='datadog-agent.datadog.svc.cluster.local', port=8126)
 
-patch_all()
+def init_prometheus(app):
+    instrumentator = Instrumentator(
+        excluded_handlers=[METRICS_ENDPOINT],
+        should_instrument_requests_inprogress=True,
+        inprogress_labels=True,
+    )
+
+    instrumentator.instrument(app)
+
+    instrumentator.add(metrics.latency(should_include_status=False)).add(
+        metrics.requests()
+    ).add(metrics.request_size()).add(metrics.response_size())
+
+    instrumentator.expose(
+        app=app, endpoint=METRICS_ENDPOINT, should_gzip=False, include_in_schema=False
+    )
+
+
 app = FastAPI()
-
+init_prometheus(app)
 
 # Initialize Redis client
 redis_client = redis.Redis(host=os.getenv("REDIS_HOST", "localhost"), port=6379, db=0)
@@ -23,24 +37,17 @@ redis_client = redis.Redis(host=os.getenv("REDIS_HOST", "localhost"), port=6379,
 # Initialize Stripe
 stripe.api_key = os.getenv("STRIPE_API_KEY")
 
+
 class Item(BaseModel):
     id: str
     name: str
     price: float
 
+
 class CartItem(BaseModel):
     item_id: str
     quantity: int
 
-
-@app.middleware("http")
-async def add_process_time_header(request, call_next):
-    start_time = datetime.utcnow()
-    response = await call_next(request)
-    process_time = (datetime.utcnow() - start_time).total_seconds()
-    statsd.histogram('test.api.request.duration.seconds', process_time, tags=[f"endpoint:{request.url.path}"])
-    print(process_time)
-    return response
 
 @app.get("/status")
 async def get_status():
@@ -57,11 +64,13 @@ async def get_status():
         "stripe_configured": bool(stripe.api_key)
     }
 
+
 @app.post("/cart/add")
 async def add_to_cart(cart_item: CartItem):
     cart_key = f"cart:{cart_item.item_id}"
     redis_client.hincrby(cart_key, "quantity", cart_item.quantity)
     return {"message": "Item added to cart"}
+
 
 @app.post("/cart/checkout")
 async def checkout_cart():
@@ -103,4 +112,3 @@ async def checkout_cart():
         return {"checkout_url": session.url}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
