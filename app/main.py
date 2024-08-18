@@ -6,12 +6,10 @@ import os
 from datetime import datetime
 
 from ddtrace import patch_all
-from ddtrace.contrib.fastapi import TracingMiddleware
 
 
 patch_all()
 app = FastAPI()
-app.add_middleware(TracingMiddleware)
 
 
 # Initialize Redis client
