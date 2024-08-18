@@ -5,7 +5,14 @@ import stripe
 import os
 from datetime import datetime
 
+from ddtrace import patch_all
+from ddtrace.contrib.fastapi import TracingMiddleware
+
+
+patch_all()
 app = FastAPI()
+app.add_middleware(TracingMiddleware)
+
 
 # Initialize Redis client
 redis_client = redis.Redis(host=os.getenv("REDIS_HOST", "localhost"), port=6379, db=0)

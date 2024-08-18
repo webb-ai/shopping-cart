@@ -25,6 +25,10 @@ spec:
             secretKeyRef:
               name: stripe-secret
               key: api-key
+        - name: DOGSTATSD_HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         readinessProbe:
           httpGet:
             path: /status
