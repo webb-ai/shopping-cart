@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopping-cart-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shopping-cart
+  template:
+    metadata:
+      labels:
+        app: shopping-cart
+    spec:
+      containers:
+      - name: shopping-cart
+        image: 096844793322.dkr.ecr.us-west-2.amazonaws.com/shopping-cart:0ae70e3
+        ports:
+        - containerPort: 8000
+        env:
+        - name: REDIS_HOST
+          value: redis-service
+        - name: STRIPE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stripe-secret
+              key: api-key
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 60
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        command:
+          - "fastapi"
+          - "run"
+          - "app/main.py"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shopping-cart-service
+spec:
+  selector:
+    app: shopping-cart
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: stripe-secret
+type: Opaque
+stringData:
+  api-key: 8jfdsahkfads78fq78vdajkfhas6
