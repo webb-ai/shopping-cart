@@ -12,10 +12,10 @@ from prometheus_fastapi_instrumentator import Instrumentator, metrics
 
 METRICS_ENDPOINT = "/metrics"
 
-REDIS_FAILURES = Counter('shopping_cart.redis_failures_total', 'Total number of Redis failures')
-REDIS_LATENCY = Gauge('shopping_cart.redis_latency_seconds', 'Redis operation latency in seconds')
-STRIPE_FAILURES = Counter('shopping_cart.stripe_failures_total', 'Total number of Stripe failures')
-STRIPE_LATENCY = Gauge('shopping_cart.stripe_latency_seconds', 'Stripe operation latency in seconds')
+REDIS_FAILURES = Counter('redis_failures_total', 'Total number of Redis failures')
+REDIS_LATENCY = Gauge('redis_latency_seconds', 'Redis operation latency in seconds')
+STRIPE_FAILURES = Counter('stripe_failures_total', 'Total number of Stripe failures')
+STRIPE_LATENCY = Gauge('stripe_latency_seconds', 'Stripe operation latency in seconds')
 
 
 def redis_operation(func):
