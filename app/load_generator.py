@@ -34,10 +34,10 @@ def add_to_cart():
 def run_load_test(duration, concurrent_users):
     """Runs the load test for a specified duration with concurrent users"""
     start_time = time.time()
-    with concurrent.futures.ThreadPoolExecutor(max_workers=concurrent_users) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=concurrent_users) as executor:
         while time.time() - start_time < duration:
             executor.submit(add_to_cart)
-            time.sleep(random.uniform(0.1, 0.5))  # Random delay between requests
+            time.sleep(random.uniform(0.01, 0.1))  # Random delay between requests
 
 
 if __name__ == "__main__":
