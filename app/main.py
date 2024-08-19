@@ -175,4 +175,4 @@ async def checkout_cart():
 
         return {"checkout_url": session.url}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
